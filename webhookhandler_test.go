@@ -12,7 +12,11 @@ type MockedProcessor struct {
 	isProcessCalled bool
 }
 
-func (p *MockedProcessor) process(interface{}) (NotifyData, error) {
+func (p *MockedProcessor) canHandle(script string) bool {
+	return script == "bitbucket"
+}
+
+func (p *MockedProcessor) process(r *http.Request) (NotifyData, error) {
 	p.isProcessCalled = true
 	return NotifyData{}, nil
 }
@@ -48,7 +52,9 @@ func TestWrongService(t *testing.T) {
 func TestBitbucketService(t *testing.T) {
 	processor := &MockedProcessor{}
 	handler := &WebhookHandler{
-		bitbucket: processor,
+		processors: []Processor{
+			processor,
+		},
 	}
 
 	req := httptest.NewRequest("GET", "/?service=bitbucket", nil)

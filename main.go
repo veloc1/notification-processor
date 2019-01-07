@@ -6,7 +6,9 @@ import (
 
 func main() {
 	handler := &WebhookHandler{
-		bitbucket: &BitbucketProcessor{},
+		processors: []Processor{
+			&BitbucketProcessor{},
+		},
 	}
 	http.Handle("/", handler)
 

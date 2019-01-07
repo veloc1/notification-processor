@@ -1,5 +1,8 @@
 package main
 
+import "net/http"
+
 type Processor interface {
-	process(interface{}) (NotifyData, error)
+	canHandle(string) bool
+	process(*http.Request) (NotifyData, error)
 }
