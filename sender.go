@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -46,7 +45,7 @@ func (s Sender) request(command string, data url.Values) bool {
 		return false
 	}
 	resp, err := client.Do(req)
-	fmt.Print(resp)
+
 	if err != nil {
 		return false
 	}

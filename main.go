@@ -7,7 +7,9 @@ import (
 )
 
 type Configuration struct {
-	Token string
+	Token      string
+	BbUsername string `json:"bbusername"`
+	BbPassword string `json:"bbpassword"`
 }
 
 func main() {
@@ -29,7 +31,10 @@ func main() {
 
 	handler := &WebhookHandler{
 		processors: []Processor{
-			&BitbucketProcessor{},
+			&BitbucketProcessor{
+				bbUsername: config.BbUsername,
+				bbPassword: config.BbPassword,
+			},
 		},
 		sender: Sender{
 			token: config.Token,
