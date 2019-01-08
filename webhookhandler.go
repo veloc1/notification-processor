@@ -9,6 +9,7 @@ type WebhookHandler struct {
 	http.Handler
 
 	processors []Processor
+	sender     Sender
 }
 
 func (h WebhookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -31,10 +32,17 @@ func (h WebhookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h WebhookHandler) process(p Processor, w http.ResponseWriter, r *http.Request) {
-	_, err := p.process(r)
+	data, err := p.process(r)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error: %s", err)
+		return
+	}
+
+	isSended := h.sender.Send(data)
+	if !isSended {
+		w.WriteHeader(http.StatusInternalServerError)
+		// fmt.Fprintf(w, "Error: %s", err)
 		return
 	}
 	w.WriteHeader(http.StatusOK)

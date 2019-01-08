@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 )
 
@@ -12,6 +13,7 @@ type BitbucketLink struct {
 
 type BitbucketLinks struct {
 	Comments BitbucketLink
+	Html     BitbucketLink
 }
 
 type BitbucketPR struct {
@@ -54,9 +56,13 @@ func (BitbucketProcessor) process(r *http.Request) (NotifyData, error) {
 
 	project := event.Repository.Name
 	message := "Pullrequest created at " + project
+	message = message + "\n\n"
+	message = message + "Url: <a href=\"" + event.Pullrequest.Links.Html.Href + "\">Link</a>"
+	fmt.Print(message)
 
 	return NotifyData{
 		message: message,
 		project: project,
+		groups:  []string{"developers"},
 	}, nil
 }
